@@ -16,9 +16,9 @@ public class Evaluation {
 		try {
 			
 			// path of the search results folder
-			String pathResults = "";
+			String pathResults = "/home/abhiram/codebase/InformationRetrieval/acm_corpus_output";
 			// path of the qrels file
-			String pathQrels = "";
+			String pathQrels = "/home/abhiram/codebase/InformationRetrieval/cs646_hw1/qrels";
 			
 			Set<String> relDocnos = new TreeSet<>();
 			BufferedReader reader = new BufferedReader( new InputStreamReader( new FileInputStream( pathQrels ), "UTF-8" ) );
@@ -42,6 +42,7 @@ public class Evaluation {
 				double r100 = evalRecall( results, relDocnos, 100 ); // Recall at rank 100
 				double ap = evalAP( results, relDocnos );
 				System.out.printf( "%-15s%-6.2f%-6.2f%-6.2f%-6.2f%-6.2f%-6.2f%-6.2f\n", model, p5, p10, p20, r10, r20, r100, ap );
+				//System.out.printf( "%-15s%-6.2f%-6.2f%-6.2f%-6.2f%-6.2f%-6.2f\n", model, p5, p10, p20,r10,r20,r100);
 			}
 			
 		} catch ( Exception e ) {
@@ -59,7 +60,12 @@ public class Evaluation {
 	 */
 	public static double evalPrecision( List<SearchResult> results, Set<String> relDocnos, int k ) {
 		// write your implementation for problem 3 "P@k" here
-		return -1;
+        int rk=0;
+        for (int i=0;i<k;i++)
+            if(relDocnos.contains(results.get(i).getDocno()))
+                rk++;
+
+		return (double) rk/k;
 	}
 	
 	/**
@@ -71,8 +77,13 @@ public class Evaluation {
 	 * @return
 	 */
 	public static double evalRecall( List<SearchResult> results, Set<String> relDocnos, int k ) {
-		// write your implementation for problem 3 "Recall@k" here
-		return -1;
+
+        int rk=0;
+        for (int i=0;i<k;i++)
+            if(relDocnos.contains(results.get(i).getDocno()))
+                rk++;
+
+        return (double) rk/relDocnos.size();
 	}
 	
 	/**
@@ -83,8 +94,13 @@ public class Evaluation {
 	 * @return
 	 */
 	public static double evalAP( List<SearchResult> results, Set<String> relDocnos ) {
-		// write your implementation for problem 3 "AP" here
-		return -1;
+
+        double totalPrecision=0;
+        for (int i=0;i<results.size();i++)
+            if(relDocnos.contains(results.get(i).getDocno()))
+                totalPrecision=evalPrecision(results,relDocnos,i);
+
+		return totalPrecision/relDocnos.size();
 	}
 	
 }
